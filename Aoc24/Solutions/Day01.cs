@@ -2,9 +2,11 @@
 
 namespace Aoc24.Solutions;
 
-public class Day01(TextReader input)
+public class Day01(TextReader input) : SolutionBase<int, int>, IConstructFromReader<Day01>
 {
-    public async Task<int> Part1()
+    public static Day01 Construct(TextReader reader) => new(reader);
+
+    public override async Task<int> Part1()
     {
         var lefts = new List<int>();
         var rights = new List<int>();
@@ -19,8 +21,7 @@ public class Day01(TextReader input)
         return lefts.Order().Zip(rights.Order(), (l, r) => l - r).Sum(Math.Abs);
     }
 
-
-    public async Task<int> Part2()
+    public override async Task<int> Part2()
     {
         var counts = new Dictionary<int, (int Left, int Right)>();
 

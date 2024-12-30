@@ -1,6 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Aoc24;
 using Aoc24.Solutions;
-Console.WriteLine("Hello, World!");
 
 Console.WriteLine("Day 1");
 using (var reader = File.OpenText(@"Data\day01.txt"))
@@ -17,3 +16,4 @@ using (var reader = File.OpenText(@"Data\day01.txt"))
 }
 
 Console.WriteLine("Goodbye");
+await Solution.Run<Day01>();
