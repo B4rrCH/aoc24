@@ -1,3 +1,4 @@
 ﻿<Solution>
+  <Project Path="Aoc24.Test\Aoc24.Test.csproj" Type="Classic C#" />
   <Project Path="Aoc24\Aoc24.csproj" Type="Classic C#" />
 </Solution>
