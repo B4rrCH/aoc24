@@ -11,7 +11,7 @@ public class Day01(TextReader input)
 
         await foreach (var line in input.ReadLinesAsync())
         {
-            var (left, right) = ParseLine(line);
+            var (left, right) = line.AsSpan().ParseLine();
             lefts.Add(left);
             rights.Add(right);
         }
@@ -19,29 +19,39 @@ public class Day01(TextReader input)
         return lefts.Order().Zip(rights.Order(), (l, r) => l - r).Sum(Math.Abs);
     }
 
+
     public async Task<int> Part2()
     {
-        var lefts = new Dictionary<int, int>();
-        var rights = new Dictionary<int, int>();
+        var counts = new Dictionary<int, (int Left, int Right)>();
 
         await foreach (var line in input.ReadLinesAsync())
         {
-            var (left, right) = ParseLine(line);
-            lefts[left] = lefts.GetValueOrDefault(left, 0) + 1;
-            rights[right] = rights.GetValueOrDefault(right, 0) + 1;
+            var (left, right) = line.AsSpan().ParseLine();
+            counts.Update(left, counter => counter with { Left = counter.Left + 1 });
+            counts.Update(right, counter => counter with { Right = counter.Right + 1 });
         }
 
-        var sum = 0;
+        return counts.Sum(kvp => kvp.Key * kvp.Value.Left * kvp.Value.Right);
+    }
+}
 
-        foreach (var (number, leftCount) in lefts)
+file static class Day01Extensions
+{
+    public static void Update<TKey, TValue>(
+        this Dictionary<TKey, TValue> dictionary,
+        TKey key,
+        Func<TValue, TValue> updateValue)
+        where TKey : notnull
+        where TValue : new()
+    {
+        if (dictionary.TryGetValue(key, out var value) is false)
         {
-            sum += number * leftCount * rights.GetValueOrDefault(number, 0);
+            value = new TValue();
         }
-
-        return sum;
+        dictionary[key] = updateValue(value);
     }
 
-    private static (int Left, int Right) ParseLine(ReadOnlySpan<char> line)
+    public static (int Left, int Right) ParseLine(this ReadOnlySpan<char> line)
     {
         const StringSplitOptions splitOptions =
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries;
