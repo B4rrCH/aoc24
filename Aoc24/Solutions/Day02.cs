@@ -7,14 +7,10 @@ public class Day02(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
 {
     public static Day02 Construct(TextReader reader) => new(reader);
 
-    public override async Task<int> Part1()
-    {
-        return await reader.ReadLinesAsync()
+    public override async Task<int> Part1() =>
+        await reader.ReadLinesAsync()
             .Select(s => Report.Parse(s))
             .CountAsync(IsSafe, CancellationToken.None);
-
-
-    }
 
     private static bool IsSafe(Report report)
     {
@@ -35,13 +31,10 @@ public class Day02(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
         return pairwiseTypes.FirstOrDefault() is not ReportType.Unsafe;
     }
 
-    public override async Task<int> Part2()
-    {
-        return await reader.ReadLinesAsync()
+    public override async Task<int> Part2() =>
+        await reader.ReadLinesAsync()
             .Select(s => Report.Parse(s))
             .CountAsync(IsSafeish, CancellationToken.None);
-
-    }
 
     private static bool IsSafeish(Report report) =>
         IsSafe(report)
