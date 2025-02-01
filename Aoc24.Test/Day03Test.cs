@@ -1,11 +1,8 @@
-using Aoc24.Solutions;
-using FluentAssertions;
-
 namespace Aoc24.Test;
 
 public class Day03Test
 {
-    [Fact]
+    [Test]
     public async Task Part1()
     {
         // Arrange
@@ -18,10 +15,10 @@ public class Day03Test
         var part1 = await day03.Part1();
 
         // Assert
-        part1.Should().Be(161);
+        await Assert.That(part1).IsEqualTo(161);
     }
 
-    [Fact]
+    [Test]
     public async Task Part2()
     {
         // Arrange
@@ -31,9 +28,9 @@ public class Day03Test
         var day03 = new Day03(reader);
 
         // Act
-        var part1 = await day03.Part2();
+        var part2 = await day03.Part2();
 
         // Assert
-        part1.Should().Be(48);
+        await Assert.That(part2).IsEqualTo(48);
     }
 }
