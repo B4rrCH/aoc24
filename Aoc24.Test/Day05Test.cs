@@ -2,7 +2,7 @@
 
 public class Day05Test
 {
-    private const string exampleInput = """
+    private const string ExampleInput = """
         47|53
         97|13
         97|61
@@ -37,7 +37,7 @@ public class Day05Test
     public async Task Part1()
     {
         // Arrange
-        var day05 = new Day05(new StringReader(exampleInput));
+        var day05 = new Day05(new StringReader(ExampleInput));
         
         // Act
         var part1 = await day05.Part1();
@@ -50,7 +50,7 @@ public class Day05Test
     public async Task Part2()
     {
         // Arrange
-        var day05 = new Day05(new StringReader(exampleInput));
+        var day05 = new Day05(new StringReader(ExampleInput));
         
         // Act
         var part2 = await day05.Part2();

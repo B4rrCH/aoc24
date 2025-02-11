@@ -1,4 +1,5 @@
-﻿using Aoc24.IO;
+﻿using System.Diagnostics;
+using Aoc24.IO;
 
 namespace Aoc24;
 
@@ -37,11 +38,23 @@ public abstract class SolutionBase
 
 public abstract class SolutionBase<TResult1, TResult2> : SolutionBase
 {
-    public sealed override async Task RunPart1() =>
-        Console.WriteLine($"\t{nameof(this.Part1)}: {await this.Part1()}");
+    public sealed override async Task RunPart1()
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var result = await this.Part1();
+        stopwatch.Stop();
+        Console.WriteLine($"\t{nameof(this.Part1)}: {result} ({stopwatch.ElapsedMilliseconds} ms)");
+    }
 
-    public sealed override async Task RunPart2() =>
-        Console.WriteLine($"\t{nameof(this.Part2)}: {await this.Part2()}");
+    public sealed override async Task RunPart2() 
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var result = await this.Part2();
+        stopwatch.Stop();
+        Console.WriteLine($"\t{nameof(this.Part2)}: {result} ({stopwatch.ElapsedMilliseconds} ms)");
+    }
+
+    
     public abstract Task<TResult1> Part1();
     public abstract Task<TResult2> Part2();
 }
