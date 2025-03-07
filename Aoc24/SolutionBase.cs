@@ -46,7 +46,7 @@ public abstract class SolutionBase<TResult1, TResult2> : SolutionBase
         Console.WriteLine($"\t{nameof(this.Part1)}: {result} ({stopwatch.ElapsedMilliseconds} ms)");
     }
 
-    public sealed override async Task RunPart2() 
+    public sealed override async Task RunPart2()
     {
         var stopwatch = Stopwatch.StartNew();
         var result = await this.Part2();
@@ -54,7 +54,7 @@ public abstract class SolutionBase<TResult1, TResult2> : SolutionBase
         Console.WriteLine($"\t{nameof(this.Part2)}: {result} ({stopwatch.ElapsedMilliseconds} ms)");
     }
 
-    
+
     public abstract Task<TResult1> Part1();
     public abstract Task<TResult2> Part2();
 }

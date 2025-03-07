@@ -30,7 +30,7 @@ public class Day05(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
     {
         var orders = await this.ParseOrders();
         var comparer = Comparer<int>.Create((a, b) => orders[a].Contains(b) ? 1 : orders[b].Contains(a) ? -1 : 0);
-        
+
         return await reader.ReadLinesAsync()
             .Select(line => line.Split(',').Select(int.Parse).ToArray())
             .SumAsync(pages =>

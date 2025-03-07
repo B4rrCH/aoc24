@@ -13,7 +13,7 @@ public static class TextReaderExtensions
             yield return line;
         }
     }
-    
+
     public static ValueTask<char[][]> ReadToGrid(this TextReader reader, CancellationToken cancellationToken = default)
         => reader.ReadLinesAsync(cancellationToken).Select(line => line.ToCharArray()).ToArrayAsync(cancellationToken);
 }

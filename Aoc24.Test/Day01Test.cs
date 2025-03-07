@@ -19,7 +19,7 @@ public class Day01Test
 
         // Act
         var part1 = await day01.Part1();
-        
+
         // Assert
         await Assert.That(part1).IsEqualTo(11);
     }

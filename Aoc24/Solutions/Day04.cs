@@ -91,8 +91,8 @@ public class Day04(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
             }
         }
     }
-    
-    
+
+
 }
 
 file static class AsyncEnumerableExtensions
@@ -107,13 +107,13 @@ file static class AsyncEnumerableExtensions
             yield break;
         }
         var first = enumerator.Current;
-        
+
         if (await enumerator.MoveNextAsync() is false)
         {
             yield break;
         }
         var second = enumerator.Current;
-        
+
         while (await enumerator.MoveNextAsync())
         {
             var third = enumerator.Current;

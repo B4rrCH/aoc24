@@ -6,7 +6,7 @@ public class Day03Test
     public async Task Part1()
     {
         // Arrange
-        const string exampleInput = 
+        const string exampleInput =
             "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
         using var reader = new StringReader(exampleInput);
         var day03 = new Day03(reader);
