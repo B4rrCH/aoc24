@@ -17,12 +17,7 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
     public override async Task<int> Part2()
     {
         var map = Map.Parse(await reader.ReadToGrid());
-        var seenUntilExit = SeenUntilExit(map) ?? throw new InvalidOperationException("Guard does not exit");
-        // TODO: improve backtracking
-        return seenUntilExit.Except([map.Start.Postion])
-            .Select(newObstruction => map with { Obstructions = map.Obstructions.Add(newObstruction) })
-            .AsParallel()
-            .Count(newMap => SeenUntilExit(newMap) is null);
+        return CountLoopsWhenObstructionsAdded(map);
     }
 
     private static HashSet<Position>? SeenUntilExit(Map map)
@@ -30,7 +25,7 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
         var (height, width, obstructions, (position, direction)) = map;
 
         var positions = new HashSet<Position>();
-        var seen = new HashSet<(Position, Position)>();
+        var seen = new HashSet<(Position, Direction)>();
 
         while (true)
         {
@@ -48,7 +43,7 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
 
             if (obstructions.Contains(nextPosition))
             {
-                direction = direction.TurnRight();
+                direction = TurnRight(direction);
             }
             else
             {
@@ -57,23 +52,115 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
         }
     }
 
+    private static int CountLoopsWhenObstructionsAdded(Map map)
+    {
+        var (height, width, obstructions, (position, direction)) = map;
+
+        HashSet<Position> addedObstructions = [position];
+        var seen = ImmutableHashSet.CreateBuilder<(Position, Direction)>();
+
+        var loopCount = 0;
+        while (true)
+        {
+            if (seen.Add((position, direction)) is false)
+            {
+                throw new InvalidOperationException("Guard does not exit.");
+            }
+
+            var nextPosition = position + direction;
+            if (nextPosition.X < 0 || height <= nextPosition.X || nextPosition.Y < 0 || width <= nextPosition.Y)
+            {
+                break;
+            }
+
+            if (obstructions.Contains(nextPosition))
+            {
+                direction = TurnRight(direction);
+                continue;
+            }
+
+            if (addedObstructions.Add(nextPosition)
+                && DoesLoop(
+                    map with
+                    {
+                        Start = (position, direction),
+                        Obstructions = obstructions.Add(nextPosition),
+                    },
+                    seen.ToImmutable().ToBuilder()))
+            {
+                ++loopCount;
+            }
+            position = nextPosition;
+        }
+
+        return loopCount;
+    }
+
+    private static bool DoesLoop(
+        Map map,
+        ImmutableHashSet<(Position, Direction)>.Builder positionsAndDirections)
+    {
+        var (height, width, obstructions, (position, direction)) = map;
+
+        while (true)
+        {
+            var nextPosition = position + direction;
+            if (nextPosition.X < 0 || height <= nextPosition.X || nextPosition.Y < 0 || width <= nextPosition.Y)
+            {
+                return false;
+            }
+
+            (position, direction) = obstructions.Contains(nextPosition)
+                ? (position, TurnRight(direction))
+                : (nextPosition, direction);
+
+            if (positionsAndDirections.Add((position, direction)) is false)
+            {
+                return true;
+            }
+        }
+    }
+
     private readonly record struct Position(int X, int Y)
     {
-        public static Position operator +(Position a, Position b) => new(a.X + b.X, a.Y + b.Y);
+        public static Position operator +(Position pos, Direction dir) =>
+            dir switch
+            {
+                Direction.Up => (pos.X - 1, pos.Y),
+                Direction.Down => (pos.X + 1, pos.Y),
+                Direction.Left => (pos.X, pos.Y - 1),
+                Direction.Right => (pos.X, pos.Y + 1),
+                _ => throw new ArgumentOutOfRangeException(nameof(dir), dir, null)
+            };
+
         public static implicit operator Position((int X, int Y) a) => new(a.X, a.Y);
-        public static Position Up => (-1, 0);
-        public static Position Down => (1, 0);
-        public static Position Left => (0, -1);
-        public static Position Right => (0, 1);
-        public Position TurnRight() => (this.Y, -this.X);
+    }
+
+    private static Direction TurnRight(Direction direction) =>
+        direction switch
+        {
+            Direction.Up => Direction.Right,
+            Direction.Right => Direction.Down,
+            Direction.Down => Direction.Left,
+            Direction.Left => Direction.Up,
+            _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null),
+        };
+
+    private enum Direction
+    {
+        Up,
+        Right,
+        Down,
+        Left,
     }
 
     private readonly record struct Map(
         int Height,
         int Width,
         ImmutableHashSet<Position> Obstructions,
-        (Position Postion, Position Direction) Start)
+        (Position Postion, Direction Direction) Start)
     {
+        private static readonly SearchValues<char> Interesting = SearchValues.Create("^v<>#");
         public static Map Parse(char[][] map)
         {
             if (map.Length == 0)
@@ -85,16 +172,14 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
             var width = map[0].Length;
 
             var obstructions = ImmutableHashSet.CreateBuilder<Position>();
-            (Position Postion, Position Direction)? start = null;
-
-            var interesting = SearchValues.Create("^v<>#");
+            (Position Postion, Direction Direction)? start = null;
 
             foreach (var (x, chars) in map.Index())
             {
                 var line = chars.AsSpan();
                 var y = 0;
 
-                while (line[y..].IndexOfAny(interesting) is var offset and >= 0)
+                while (line[y..].IndexOfAny(Interesting) is var offset and >= 0)
                 {
                     y += offset;
                     switch (line[y])
@@ -103,16 +188,16 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
                             obstructions.Add((x, y));
                             break;
                         case '^':
-                            start = ((x, y), Position.Up);
+                            start = ((x, y), Direction.Up);
                             break;
                         case 'v':
-                            start = ((x, y), Position.Down);
+                            start = ((x, y), Direction.Down);
                             break;
                         case '<':
-                            start = ((x, y), Position.Left);
+                            start = ((x, y), Direction.Left);
                             break;
                         case '>':
-                            start = ((x, y), Position.Right);
+                            start = ((x, y), Direction.Right);
                             break;
                     }
 
