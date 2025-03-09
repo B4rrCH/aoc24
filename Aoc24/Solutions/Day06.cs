@@ -1,11 +1,15 @@
 ﻿using System.Buffers;
 using System.Collections.Immutable;
 using Aoc24.IO;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Aoc24.Solutions;
 
 public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromReader<Day06>
 {
+    private static readonly DefaultObjectPool<HashSet<(Position, Direction)>> SetPool =
+        HashSetPool.Create<(Position, Direction)>();
+
     public static Day06 Construct(TextReader reader) => new(reader);
 
     public override async Task<int> Part1()
@@ -57,7 +61,7 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
         var (height, width, obstructions, (position, direction)) = map;
 
         HashSet<Position> addedObstructions = [position];
-        var seen = ImmutableHashSet.CreateBuilder<(Position, Direction)>();
+        var seen = new HashSet<(Position, Direction)>();
 
         var loopCount = 0;
         while (true)
@@ -86,7 +90,7 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
                         Start = (position, direction),
                         Obstructions = obstructions.Add(nextPosition),
                     },
-                    seen.ToImmutable().ToBuilder()))
+                    seen))
             {
                 ++loopCount;
             }
@@ -96,17 +100,17 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
         return loopCount;
     }
 
-    private static bool DoesLoop(
-        Map map,
-        ImmutableHashSet<(Position, Direction)>.Builder positionsAndDirections)
+    private static bool DoesLoop(Map map, HashSet<(Position, Direction)> seenBefore)
     {
         var (height, width, obstructions, (position, direction)) = map;
+        var seenHere = SetPool.Get();
 
         while (true)
         {
             var nextPosition = position + direction;
             if (nextPosition.X < 0 || height <= nextPosition.X || nextPosition.Y < 0 || width <= nextPosition.Y)
             {
+                SetPool.Return(seenHere);
                 return false;
             }
 
@@ -114,8 +118,10 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
                 ? (position, TurnRight(direction))
                 : (nextPosition, direction);
 
-            if (positionsAndDirections.Add((position, direction)) is false)
+            if (seenBefore.Contains((position, direction)) ||
+                seenHere.Add((position, direction)) is false)
             {
+                SetPool.Return(seenHere);
                 return true;
             }
         }
@@ -210,6 +216,24 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
                 width,
                 obstructions.ToImmutable(),
                 start ?? throw new InvalidOperationException("Start position not found."));
+        }
+    }
+
+    private static class HashSetPool
+    {
+        public static DefaultObjectPool<HashSet<T>> Create<T>() => new(Policy<T>.Instance);
+
+        private sealed class Policy<T> : IPooledObjectPolicy<HashSet<T>>
+        {
+            public static Policy<T> Instance { get; } = new();
+
+            public HashSet<T> Create() => [];
+
+            public bool Return(HashSet<T> hashSet)
+            {
+                hashSet.Clear();
+                return true;
+            }
         }
     }
 }
