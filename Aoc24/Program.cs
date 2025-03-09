@@ -9,3 +9,4 @@ await Solution.Run<Day05>();
 await Solution.Run<Day06>();
 await Solution.Run<Day07>();
 await Solution.Run<Day08>();
+await Solution.Run<Day09>();
