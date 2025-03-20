@@ -218,22 +218,4 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
                 start ?? throw new InvalidOperationException("Start position not found."));
         }
     }
-
-    private static class HashSetPool
-    {
-        public static DefaultObjectPool<HashSet<T>> Create<T>() => new(Policy<T>.Instance);
-
-        private sealed class Policy<T> : IPooledObjectPolicy<HashSet<T>>
-        {
-            public static Policy<T> Instance { get; } = new();
-
-            public HashSet<T> Create() => [];
-
-            public bool Return(HashSet<T> hashSet)
-            {
-                hashSet.Clear();
-                return true;
-            }
-        }
-    }
 }
