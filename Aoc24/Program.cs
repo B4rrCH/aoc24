@@ -14,6 +14,7 @@ IEnumerable<(string, Func<Task<PartResult>>, Func<Task<PartResult>>)> solvers =
     Solvers<Day08>(),
     Solvers<Day09>(),
     Solvers<Day10>(),
+    Solvers<Day11>(),
 ];
 
 var table = new Table()
