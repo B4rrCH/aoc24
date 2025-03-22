@@ -14,13 +14,13 @@ public class Day06(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
 
     public override async Task<int> Part1()
     {
-        var map = Map.Parse(await reader.ReadToGrid());
+        var map = Map.Parse(await reader.ReadToGridAsync());
         return SeenUntilExit(map)?.Count ?? throw new InvalidOperationException("Guard does not exit");
     }
 
     public override async Task<int> Part2()
     {
-        var map = Map.Parse(await reader.ReadToGrid());
+        var map = Map.Parse(await reader.ReadToGridAsync());
         return CountLoopsWhenObstructionsAdded(map);
     }
 

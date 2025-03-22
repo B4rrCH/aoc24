@@ -20,10 +20,10 @@ public static class TextReaderExtensions
         }
     }
 
-    public static ValueTask<char[][]> ReadToGrid(this TextReader reader, CancellationToken cancellationToken = default)
+    public static ValueTask<char[][]> ReadToGridAsync(this TextReader reader, CancellationToken cancellationToken = default)
         => reader.ReadLinesAsync().Select(line => line.ToCharArray()).ToArrayAsync(cancellationToken);
 
-    public static async ValueTask<char[,]> ReadTo2DArray(this TextReader reader, CancellationToken cancellationToken = default)
+    public static async ValueTask<char[,]> ReadTo2DArrayAsync(this TextReader reader, CancellationToken cancellationToken = default)
     {
         var lines = await reader.ReadLinesAsync().ToArrayAsync(cancellationToken);
 

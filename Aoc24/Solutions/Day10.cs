@@ -15,7 +15,7 @@ public class Day10(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
 
     public override async Task<int> Part1()
     {
-        var grid = await reader.ReadTo2DArray();
+        var grid = await reader.ReadTo2DArrayAsync();
 
         return grid.Indexes()
                 .AsParallel()
@@ -62,7 +62,7 @@ public class Day10(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
 
     public override async Task<int> Part2()
     {
-        var grid = await reader.ReadTo2DArray();
+        var grid = await reader.ReadTo2DArrayAsync();
 
         return grid.Indexes()
             .AsParallel()
