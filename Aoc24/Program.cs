@@ -15,15 +15,23 @@ IEnumerable<(string, Func<Task<PartResult>>, Func<Task<PartResult>>)> solvers =
     Solver<Day10>(),
     Solver<Day11>(),
     Solver<Day12>(),
+    Solver<Day13>(),
 ];
 
 foreach (var (name, part1, part2) in solvers)
 {
+    var longest = ulong.MaxValue.ToString().Length;
     Console.WriteLine(name);
     var result1 = await part1();
-    Console.WriteLine($"    Part1: {result1.Result,15} ({result1.TimeTaken.TotalMilliseconds:0} ms)");
+    Console.WriteLine(
+        $$"""    Part1: {0,{{longest}}} ({1:0} ms)""",
+        result1.Result,
+        result1.TimeTaken.TotalMilliseconds);
     var result2 = await part2();
-    Console.WriteLine($"    Part2: {result2.Result,15} ({result2.TimeTaken.TotalMilliseconds:0} ms)");
+    Console.WriteLine(
+        $$"""    Part2: {0,{{longest}}} ({1:0} ms)""",
+        result2.Result,
+        result2.TimeTaken.TotalMilliseconds);
 }
 
 return;
