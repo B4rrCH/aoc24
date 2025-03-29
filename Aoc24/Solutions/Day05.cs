@@ -12,7 +12,7 @@ public class Day05(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
 
         return await reader.ReadLinesAsync()
             .Select(line => line.Split(',').Select(int.Parse).ToArray())
-            .SumAsync(pages =>
+            .Select(pages =>
             {
                 foreach (var (index, page) in pages.Index())
                 {
@@ -23,7 +23,8 @@ public class Day05(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
                 }
 
                 return pages[pages.Length / 2];
-            });
+            })
+            .SumAsync();
     }
 
     public override async Task<int> Part2()
@@ -33,7 +34,7 @@ public class Day05(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
 
         return await reader.ReadLinesAsync()
             .Select(line => line.Split(',').Select(int.Parse).ToArray())
-            .SumAsync(pages =>
+            .Select(pages =>
             {
                 foreach (var (index, page) in pages.Index())
                 {
@@ -44,7 +45,8 @@ public class Day05(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
                 }
 
                 return 0;
-            });
+            })
+            .SumAsync();
     }
 
     private ValueTask<ILookup<int, int>> ParseOrders() =>

@@ -21,7 +21,7 @@ public class Day04(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
 
     public override async Task<int> Part2() =>
         await reader.ReadLinesAsync().Chunk3()
-            .SumAsync(threeLines =>
+            .Select(threeLines =>
             {
                 var (first, second, third) = threeLines;
                 var sum = 0;
@@ -37,7 +37,8 @@ public class Day04(TextReader reader) : SolutionBase<int, int>, IConstructFromRe
                 }
 
                 return sum;
-            });
+            })
+            .SumAsync();
 
     private static IEnumerable<(Position, Position, Position, Position)> Part1Candidates(string[] grid)
     {
