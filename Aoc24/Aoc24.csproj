@@ -20,5 +20,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="Aoc24.Test"/>
+    </ItemGroup>
 
 </Project>
