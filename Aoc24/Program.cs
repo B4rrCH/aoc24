@@ -20,6 +20,7 @@ IEnumerable<(string, Func<Task<PartResult>>, Func<Task<PartResult>>)> solvers =
     Solver<Day15>(),
     Solver<Day16>(),
     Solver<Day18>(),
+    Solver<Day19>(),
 ];
 
 foreach (var (name, part1, part2) in solvers)
